@@ -93,8 +93,12 @@
       }
     });
 
-    // ─ 개발자 도구 열람 감지 (열리면 키 무효화) ─
+    // ─ 개발자 도구 열람 감지 (PC에서만) ─
     (function detectDevTools() {
+      // 모바일 환경에서는 감지하지 않음
+      const isMobile = /Mobi|Android|iPhone|iPad|iPod/.test(navigator.userAgent);
+      if (isMobile) return;
+
       const devtools = /./;
       devtools.toString = function() {
         alert("[보안] 개발자 도구 열림 감지됨. 키를 삭제합니다.");
@@ -107,3 +111,4 @@
 
 </body>
 </html>
+
