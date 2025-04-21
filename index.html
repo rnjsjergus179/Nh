@@ -1,9 +1,8 @@
-<!DOCTYPE html>
-<html lang="ko">
+<!DOCTYPE html><html lang="ko">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>HUD-1 채팅 인터페이스</title>
+  <title>HUD-1 채팅 인터페이스 - Render Key 연동</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -49,18 +48,17 @@
     }
   </style>
 </head>
-<body>
-
-  <div id="hud-container">
+<body>  <div id="hud-container">
     <h2>HUD-1 채팅창</h2>
     <div id="chat-log"></div>
     <div id="hud-input-area">
       <input type="text" id="hud-input" placeholder="메시지를 입력하세요..." />
       <button id="send-btn">전송</button>
     </div>
-  </div>
+  </div>  <script>
+    // Render API 키 하드코딩
+    const RENDER_API_KEY = "rnd_MQZo2oxcvugaWw9EtJg8Ype3qxVz";
 
-  <script>
     const chatLog = document.getElementById('chat-log');
     const input = document.getElementById('hud-input');
     const button = document.getElementById('send-btn');
@@ -68,13 +66,11 @@
     button.addEventListener('click', () => {
       const msg = input.value.trim();
       if (!msg) return;
-      appendChat("사용자", msg);
+      appendChat('사용자', msg);
       input.value = '';
 
-      // 향후 NLP 처리 또는 API 호출 연결 지점
-      setTimeout(() => {
-        appendChat("AI", `응답 준비 중: "${msg}"`);
-      }, 500);
+      // Render Key를 채팅창에 연동
+      appendChat('AI', `Render Key: ${RENDER_API_KEY}`);
     });
 
     function appendChat(role, message) {
@@ -83,7 +79,5 @@
       chatLog.appendChild(p);
       chatLog.scrollTop = chatLog.scrollHeight;
     }
-  </script>
-
-</body>
+  </script></body>
 </html>
