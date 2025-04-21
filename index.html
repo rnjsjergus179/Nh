@@ -1,5 +1,4 @@
-<!DOCTYPE html>
-<html lang="ko">
+<!DOCTYPE html><html lang="ko">
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -14,36 +13,23 @@
     pre { background:#f4f4f4; padding:1em; overflow-x:auto; white-space: pre-wrap; }
   </style>
 </head>
-<body>
-
-  <h1>풀옵션 API 호출 데모</h1>
-
-  <!-- 1) Google Custom Search -->
-  <section id="cse">
+<body>  <h1>풀옵션 API 호출 데모</h1>  <!-- 1) Google Custom Search -->  <section id="cse">
     <h2>1. Google CSE 검색</h2>
     <label for="q">검색어</label>
     <input type="text" id="q" placeholder="예: AI 3D 비서" />
     <button id="btn-search">검색</button>
     <pre id="out-search">// 여기에 검색 결과</pre>
-  </section>
-
-  <!-- 2) 날씨 정보 -->
-  <section id="weather">
+  </section>  <!-- 2) 날씨 정보 -->  <section id="weather">
     <h2>2. 날씨 정보</h2>
     <label for="city">도시명</label>
     <input type="text" id="city" placeholder="예: Seoul" />
     <button id="btn-weather">날씨 조회</button>
     <pre id="out-weather">// 여기에 날씨 결과</pre>
-  </section>
-
-  <!-- 3) Render 서비스 조회 -->
-  <section id="render">
+  </section>  <!-- 3) Render 서비스 조회 -->  <section id="render">
     <h2>3. Render 서비스 목록</h2>
     <button id="btn-render">서비스 불러오기</button>
     <pre id="out-render">// 여기에 Render 서비스 목록</pre>
-  </section>
-
-  <script>
+  </section>  <script>
     // ─────────────── 하드코딩된 키들 ───────────────
     const RENDER_API_KEY    = "rnd_MQZo2oxcvugaWw9EtJg8Ype3qxVz";
     const GOOGLE_API_KEY    = "YOUR_GOOGLE_API_KEY";
@@ -93,22 +79,5 @@
       }
     });
 
-    // ─ 개발자 도구 열람 감지 (PC에서만) ─
-    (function detectDevTools() {
-      // 모바일 환경에서는 감지하지 않음
-      const isMobile = /Mobi|Android|iPhone|iPad|iPod/.test(navigator.userAgent);
-      if (isMobile) return;
-
-      const devtools = /./;
-      devtools.toString = function() {
-        alert("[보안] 개발자 도구 열림 감지됨. 키를 삭제합니다.");
-        window.location.reload();
-      };
-      console.log(devtools);
-    })();
-    // ───────────────────────────────────────────────
-  </script>
-
-</body>
+  </script></body>
 </html>
-
