@@ -2,7 +2,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>HUD-1 채팅으로 Google & Render 호출</title>
+  <title>HUD-1 채팅창 - NLP 파이프라인 연동</title>
   <style>
     body { font-family: Arial, sans-serif; background: #f5f5f5; padding: 2rem; display: flex; justify-content: center; }
     #hud-container { width: 100%; max-width: 600px; background: #fff; border: 1px solid #ccc; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1); padding: 1rem; }
@@ -19,11 +19,11 @@
     <h2>HUD-1 채팅창</h2>
     <div id="chat-log"></div>
     <div id="hud-input-area">
-      <input type="text" id="hud-input" placeholder="검색어를 입력하세요..." />
+      <input type="text" id="hud-input" placeholder="메시지를 입력하세요..." />
       <button id="send-btn">전송</button>
     </div>
   </div>  <script>
-    // 하드코딩된 API 키
+    // 하드코딩된 API 키 (유지)
     const GOOGLE_API_KEY = "YOUR_GOOGLE_API_KEY";
     const GOOGLE_CSE_ID  = "YOUR_GOOGLE_CSE_ID";
     const RENDER_API_KEY = "rnd_MQZo2oxcvugaWw9EtJg8Ype3qxVz";
@@ -39,14 +39,16 @@
       chatLog.scrollTop = chatLog.scrollHeight;
     }
 
-    async function googleSearch(query) {
-      const url = `https://www.googleapis.com/customsearch/v1?key=${GOOGLE_API_KEY}&cx=${GOOGLE_CSE_ID}&q=${encodeURIComponent(query)}`;
-      const res = await fetch(url);
-      if (!res.ok) throw new Error(`Google API error: ${res.status}`);
-      const json = await res.json();
-      return json.items?.map(item => `${item.title}\n${item.link}`).join('\n\n') || '검색 결과가 없습니다.';
+    // NLP 파이프라인: 토큰화 및 의도 인식
+    function tokenizeAndAnalyze(text) {
+      const lower = text.toLowerCase();
+      const tokens = lower.split(/\s+/).filter(t=>t);
+      // 단순 예시: 'render' 키워드 포함 시 intent='render'
+      const intent = tokens.includes('render') ? 'render' : 'unknown';
+      return { tokens, intent };
     }
 
+    // Render 서비스 API 호출
     async function fetchRenderServices() {
       const res = await fetch('https://api.render.com/v1/services', {
         headers: { 'Authorization': `Bearer ${RENDER_API_KEY}` }
@@ -57,15 +59,20 @@
     }
 
     button.addEventListener('click', async () => {
-      const query = input.value.trim();
-      if (!query) return;
-      appendChat('사용자', query);
+      const msg = input.value.trim();
+      if (!msg) return;
+      appendChat('사용자', msg);
       input.value = '';
       appendChat('AI', '처리 중...');
+
       try {
-        const gRes = await googleSearch(query);
-        const rRes = await fetchRenderServices();
-        chatLog.lastChild.innerHTML = `<strong>AI:</strong> <pre>Google Results:\n${gRes}\n\nRender Services:\n${rRes}</pre>`;} catch (err) {
+        const { tokens, intent } = tokenizeAndAnalyze(msg);
+        let response = `Tokens: ${JSON.stringify(tokens)}\nIntent: ${intent}`;
+        if (intent === 'render') {
+          const services = await fetchRenderServices();
+          response += `\n\nRender Services:\n${services}`;
+        }
+        chatLog.lastChild.innerHTML = `<strong>AI:</strong> <pre>${response}</pre>`;} catch (err) {
     chatLog.lastChild.innerHTML = `<strong>AI:</strong> 오류 발생: ${err.message}`;
   }
 });
