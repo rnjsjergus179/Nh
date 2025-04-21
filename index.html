@@ -1,83 +1,62 @@
 <!DOCTYPE html><html lang="ko">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>HUD-1 채팅 인터페이스 - Render Key 연동</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>API 호출 데모</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f5f5f5;
-      padding: 2rem;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-    #hud-container {
-      width: 100%;
-      max-width: 600px;
-      background: #ffffff;
-      border: 1px solid #ccc;
-      border-radius: 10px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.05);
-      padding: 1rem;
-    }
-    #chat-log {
-      height: 250px;
-      overflow-y: auto;
-      border: 1px solid #ddd;
-      padding: 0.5rem;
-      margin-bottom: 1rem;
-      background: #fafafa;
-    }
-    #chat-log p {
-      margin: 0.25rem 0;
-    }
-    #hud-input-area {
-      display: flex;
-      gap: 0.5rem;
-    }
-    #hud-input {
-      flex: 1;
-      padding: 0.5rem;
-      font-size: 1rem;
-    }
-    #send-btn {
-      padding: 0.5rem 1rem;
-      font-weight: bold;
-      cursor: pointer;
-    }
+    body { font-family: Arial, sans-serif; max-width: 700px; margin: auto; padding: 1rem; }
+    section { margin-bottom: 2rem; }
+    input[type=text] { width: 100%; padding: .5rem; box-sizing: border-box; }
+    button { margin-top: .5rem; padding: .5rem 1rem; cursor: pointer; }
+    pre { background: #f4f4f4; padding: 1rem; white-space: pre-wrap; overflow-x: auto; }
+    h2 { margin-bottom: .5rem; }
   </style>
 </head>
-<body>  <div id="hud-container">
-    <h2>HUD-1 채팅창</h2>
-    <div id="chat-log"></div>
-    <div id="hud-input-area">
-      <input type="text" id="hud-input" placeholder="메시지를 입력하세요..." />
-      <button id="send-btn">전송</button>
-    </div>
-  </div>  <script>
-    // Render API 키 하드코딩
+<body>
+  <h1>API 호출 데모</h1>  <!-- Google Custom Search -->  <section>
+    <h2>Google Custom Search</h2>
+    <input type="text" id="google-query" placeholder="검색어를 입력하세요" />
+    <button id="google-search">검색</button>
+    <pre id="google-result">// 검색 결과가 표시됩니다</pre>
+  </section>  <!-- Render 서비스 목록 -->  <section>
+    <h2>Render 서비스 목록</h2>
+    <button id="render-fetch">불러오기</button>
+    <pre id="render-result">// 서비스 목록이 표시됩니다</pre>
+  </section>  <script>
+    // 하드코딩된 키 (UI에 표시되지 않음)
     const RENDER_API_KEY = "rnd_MQZo2oxcvugaWw9EtJg8Ype3qxVz";
+    const GOOGLE_API_KEY = "YOUR_GOOGLE_API_KEY";
+    const GOOGLE_CSE_ID  = "YOUR_GOOGLE_CSE_ID";
 
-    const chatLog = document.getElementById('chat-log');
-    const input = document.getElementById('hud-input');
-    const button = document.getElementById('send-btn');
-
-    button.addEventListener('click', () => {
-      const msg = input.value.trim();
-      if (!msg) return;
-      appendChat('사용자', msg);
-      input.value = '';
-
-      // Render Key를 채팅창에 연동
-      appendChat('AI', `Render Key: ${RENDER_API_KEY}`);
+    // Google CSE 호출
+    document.getElementById('google-search').addEventListener('click', async () => {
+      const q = encodeURIComponent(document.getElementById('google-query').value.trim());
+      if (!q) return alert('검색어를 입력하세요.');
+      const out = document.getElementById('google-result');
+      out.textContent = '// 로딩 중...';
+      try {
+        const url = `https://www.googleapis.com/customsearch/v1?key=${GOOGLE_API_KEY}&cx=${GOOGLE_CSE_ID}&q=${q}`;
+        const res = await fetch(url);
+        const data = await res.json();
+        out.textContent = JSON.stringify(data, null, 2);
+      } catch (e) {
+        out.textContent = `// 오류 발생: ${e.message}`;
+      }
     });
 
-    function appendChat(role, message) {
-      const p = document.createElement('p');
-      p.innerHTML = `<strong>${role}:</strong> ${message}`;
-      chatLog.appendChild(p);
-      chatLog.scrollTop = chatLog.scrollHeight;
-    }
+    // Render API 호출
+    document.getElementById('render-fetch').addEventListener('click', async () => {
+      const out = document.getElementById('render-result');
+      out.textContent = '// 로딩 중...';
+      try {
+        const res = await fetch('https://api.render.com/v1/services', {
+          headers: { 'Authorization': `Bearer ${RENDER_API_KEY}` }
+        });
+        const data = await res.json();
+        out.textContent = JSON.stringify(data, null, 2);
+      } catch (e) {
+        out.textContent = `// 오류 발생: ${e.message}`;
+      }
+    });
   </script></body>
 </html>
